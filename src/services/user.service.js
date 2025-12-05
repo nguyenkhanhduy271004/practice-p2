@@ -66,6 +66,13 @@ class UserSerivce {
 
         data = removeUndefinedObject(data);
 
+        if (data.email) {
+            const existEmail = await UserModel.findOne({email: data.email, _id: { $ne: userId } });
+            if (existEmail) {
+                throw new Error('Email already exists');
+            }
+        }
+
         const foundUser = await UserModel.findByIdAndUpdate(userId, data, { new: true });
         if (!foundUser) {
             throw new NotFoundError('User not found');
